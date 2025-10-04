@@ -3,7 +3,7 @@ from enum import Enum, auto
 import sys
 from typing import Optional, Callable
 
-import ansi_control
+from selman import ansi_control
 
 FG = {
     "muted": "38;5;245",

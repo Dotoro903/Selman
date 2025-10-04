@@ -9,13 +9,13 @@ import termios
 import tty
 from typing import List, Optional
 
-from printer import (
+from selman.printer import (
     print_unfocused,
     write_line,
     print_text_effect,
     TextEffect,
 )
-import ansi_control
+from selman import ansi_control
 
 
 class Selman:
