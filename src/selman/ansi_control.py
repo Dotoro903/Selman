@@ -4,6 +4,7 @@
 ANSI terminal cursor and key utilities.
 """
 import sys
+import re
 from typing import Callable
 
 ANSI_KEY_UP = b"\x1b[A"
@@ -11,6 +12,21 @@ ANSI_KEY_DOWN = b"\x1b[B"
 ANSI_KEY_RIGHT = b"\x1b[C"
 ANSI_KEY_LEFT = b"\x1b[D"
 ANSI_KEY_EOX = b"\x03"
+
+
+def get_cursor_position():
+    """Get current cursor position"""
+    sys.stdout.write(f"\x1b[6n")
+    sys.stdout.flush()
+
+    buf = ""
+    while (ch := sys.stdin.read(1)) != "R":
+        buf += ch
+    buf += "R"
+
+    m = re.search(r"\x1b\[(\d+);(\d+)R", buf)
+    sys.stdout.flush()
+    return tuple(map(int, m.groups())) if m else None
 
 
 def cursor_up(dist: int):
@@ -59,10 +75,11 @@ def move_cursor_by_relative_pos_row(relative_pos_row: int) -> Callable[[], None]
 def set_cursor_visibility(is_visible: bool) -> None:
     sys.stdout.write("\x1b[?25h" if is_visible else "\x1b[?25l")
 
+
 def erase_line(col_offset: int) -> None:
     sys.stdout.write("\x1b[2K")
     set_col_offset(col_offset)
-    
+
 
 def enable_autowrap(enabled: bool) -> None:
     sys.stdout.write("\x1b[?7h" if enabled else "\x1b[?7l")
